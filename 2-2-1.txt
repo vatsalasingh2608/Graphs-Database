@@ -1,0 +1,23 @@
+db.movies.aggregate(
+
+	// Pipeline
+	[
+
+		// Stage 1
+		{
+			$match: {
+			    // enter query here
+			    {"directors.first": /James/},
+			    {"directors.last": /Cameron/},
+				{"genres.genre": "Sci-Fi"},
+				{"year": {$gte: 1989, $lte: 1995}}
+				}
+				
+		},
+		// Stage 2
+		{
+			$unwind: {path: "$actors"}
+				
+		}
+	]
+	)

@@ -1,0 +1,134 @@
+db.directedby.aggregate(
+
+	// Pipeline
+	[
+		// Stage 1
+		{
+			$lookup: {
+			    "from" : "directors",
+			    "localField" : "directorid",
+			    "foreignField" : "_id",
+			    "as" : "dirbyDir"
+			}
+		},
+
+		// Stage 2
+		{
+			$unwind: {
+			    path : "$dirbyDir"
+			}
+		},
+
+		// Stage 3
+		{
+			$match: {
+				"dirbyDir.first": "Woody",
+				"dirbyDir.last": "Allen"
+			}
+		},
+
+		// Stage 4
+		{
+			$lookup: {
+			    "from" : "moviegenres",
+			    "localField" : "movieid",
+			    "foreignField" : "movieid",
+			    "as" : "dirbyDirMovgen"
+			}
+		},
+
+		// Stage 5
+		{
+			$unwind: {
+			    path : "$dirbyDirMovgen"
+			}
+		},
+
+		// Stage 6
+		{
+			$lookup: {
+			    "from" : "genres",
+			    "localField" : "dirbyDirMovgen.genreid",
+			    "foreignField" : "_id",
+			    "as" : "dirbyDirMovgenGenre"
+			}
+		},
+
+		// Stage 7
+		{
+			$unwind: {
+			    path : "$dirbyDirMovgenGenre"
+			}
+		},
+
+		// Stage 8
+		{
+			$match: {
+			    // enter query here
+			    "dirbyDirMovgenGenre.genre": "Comedy"
+			}
+		},
+
+		// Stage 9
+		{
+			$lookup: {
+			    "from" : "roles",
+			    "localField" : "movieid",
+			    "foreignField" : "movieid",
+			    "as" : "dirbyDirMovgenGenreRoles"
+			}
+		},
+
+		// Stage 10
+		{
+			$unwind: {
+			    path : "$dirbyDirMovgenGenreRoles"
+			}
+		},
+
+		// Stage 11
+		{
+			$lookup: {
+			    "from" : "actors",
+			    "localField" : "dirbyDirMovgenGenreRoles.actorid",
+			    "foreignField" : "_id",
+			    "as" : "dirbyDirMovgenGenreRolesActors"
+			}
+		},
+
+		// Stage 12
+		{
+			$unwind: {
+			    path : "$dirbyDirMovgenGenreRolesActors"
+			}
+		},
+
+		// Stage 13
+		{
+			$group: {
+				_id: "dirbyDirMovgenGenreRolesActors.actorid",
+				count: {$sum: 1}
+			}
+		},
+
+		// Stage 14
+		{
+			$match: {
+			    // enter query here
+			    count: { $gt: 3 }
+			}
+		},
+
+		// Stage 15
+		{
+			$project: {
+			    // specifications
+			    _id: "$dirbyDirMovgenGenreRolesActors.actorid",
+			}
+		},
+
+	]
+
+	// Created with Studio 3T, the IDE for MongoDB - https://studio3t.com/
+
+);

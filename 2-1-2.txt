@@ -1,0 +1,84 @@
+db.directedby.aggregate(
+
+	// Pipeline
+	[
+		// Stage 1
+		{
+			$lookup: {
+			    "from" : "directors",
+			    "localField" : "directorid",
+			    "foreignField" : "_id",
+			    "as" : "dirDirby"
+			}
+		},
+
+		// Stage 2
+		{
+			$unwind: {
+			    path : "$dirDirby"
+			}
+		},
+
+		// Stage 3
+		{
+			$match: {
+			  "dirDirby.first" : /Steven/,
+			  "dirDirby.last" : /Spielberg/
+			
+			}
+		},
+
+		// Stage 4
+		{
+			$lookup: {
+			    "from" : "moviegenres",
+			    "localField" : "movieid",
+			    "foreignField" : "movieid",
+			    "as" : "dirDirbyMovgen"
+			}
+		},
+
+		// Stage 5
+		{
+			$unwind: {
+			    path : "$dirDirbyMovgen"
+			}
+		},
+
+		// Stage 6
+		{
+			$lookup: {
+			    "from" : "genres",
+			    "localField" : "dirDirbyMovgen.genreid",
+			    "foreignField" : "_id",
+			    "as" : "dirDirbyMovgenGen"
+			}
+		},
+
+		// Stage 7
+		{
+			$unwind: {
+			    path : "$dirDirbyMovgenGen"
+			}
+		},
+
+		// Stage 8
+		{
+			$match: {
+				"dirDirbyMovgenGen.genre": "Drama"
+			}
+		},
+
+		// Stage 9
+		{
+			$project: {
+			    // specifications
+			    movieid: "$dirDirbyMovgen.movieid", _id: 0
+			}
+		},
+
+	]
+
+	// Created with Studio 3T, the IDE for MongoDB - https://studio3t.com/
+
+);

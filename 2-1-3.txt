@@ -1,0 +1,85 @@
+db.directedby.aggregate(
+
+	// Pipeline
+	[
+		// Stage 1
+		{
+			$lookup: {
+			    "from" : "directors",
+			    "localField" : "directorid",
+			    "foreignField" : "_id",
+			    "as" : "dirbyDir"
+			}
+		},
+
+		// Stage 2
+		{
+			$unwind: {
+			    path : "$dirbyDir"
+			}
+		},
+
+		// Stage 3
+		{
+			$match: {
+				"dirbyDir.first" : /Steven/,
+				"dirbyDir.last" : /Spielberg/
+			}
+		},
+
+		// Stage 4
+		{
+			$lookup: {
+			    "from" : "roles",
+			    "localField" : "movieid",
+			    "foreignField" : "movieid",
+			    "as" : "dirbyDirRoles"
+			}
+		},
+
+		// Stage 5
+		{
+			$unwind: {
+			    path : "$dirbyDirRoles"
+			}
+		},
+
+		// Stage 6
+		{
+			$lookup: {
+			    "from" : "actors",
+			    "localField" : "dirbyDirRoles.actorid",
+			    "foreignField" : "_id",
+			    "as" : "dirbyDirRolesActor"
+			}
+		},
+
+		// Stage 7
+		{
+			$unwind: {
+			    path : "$dirbyDirRolesActor"
+			}
+		},
+
+		// Stage 8
+		{
+			$match: {
+			    // enter query here
+			    "dirbyDirRolesActor.first" : "Tom",
+			    "dirbyDirRolesActor.last" : "Hanks"
+			}
+		},
+
+		// Stage 9
+		{
+			$project: {
+			    // specifications
+			    movieid: "$dirbyDirRoles.movieid", _id: 0
+			}
+		},
+
+	]
+
+	// Created with Studio 3T, the IDE for MongoDB - https://studio3t.com/
+
+);

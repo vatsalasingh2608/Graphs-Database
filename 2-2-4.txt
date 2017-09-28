@@ -1,0 +1,29 @@
+db.movies.aggregate(
+
+	// Pipeline
+	[
+
+		// Stage 1
+		{
+			$match: {
+			    // enter query here
+			    {"directors.first": /Woody/},
+			    {"directors.last": /Allen/},
+				{"genres.genre": "Comedy"},
+				}
+				
+		},
+		// Stage 2
+		{
+			$unwind: {path: "$actors"}
+				
+		}
+		// Stage 3
+		{
+			$match: {
+			    // enter query here
+			    count: { $gt: 3 }
+			}
+		}
+	]
+	)

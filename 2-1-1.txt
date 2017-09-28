@@ -1,0 +1,136 @@
+db.directedby.aggregate(
+
+	// Pipeline
+	[
+		// Stage 1
+		{
+			$lookup: {
+			    "from" : "directors",
+			    "localField" : "directorid",
+			    "foreignField" : "_id",
+			    "as" : "dirDirby"
+			}
+		},
+
+		// Stage 2
+		{
+			$unwind: {
+			    path : "$dirDirby"
+			}
+		},
+
+		// Stage 3
+		{
+			$match: {
+			    // enter query here
+			    "dirDirby.first": /James/,
+			    "dirDirby.last": /Cameron/
+			}
+		},
+
+		// Stage 4
+		{
+			$lookup: {
+			    "from" : "movies",
+			    "localField" : "movieid",
+			    "foreignField" : "_id",
+			    "as" : "dirDirbyMov"
+			}
+		},
+
+		// Stage 5
+		{
+			$unwind: {
+			    path : "$dirDirbyMov"
+			}
+		},
+
+		// Stage 6
+		{
+			$match: {
+			  "dirDirbyMov.year": {
+			    $gte: 1989, $lte: 1995
+			  }
+			
+			}
+		},
+
+		// Stage 7
+		{
+			$lookup: {
+			    "from" : "moviegenres",
+			    "localField" : "movieid",
+			    "foreignField" : "movieid",
+			    "as" : "dirDirbyMovMovgen"
+			}
+		},
+
+		// Stage 8
+		{
+			$unwind: {
+			    path : "$dirDirbyMovMovgen"
+			}
+		},
+
+		// Stage 9
+		{
+			$lookup: {
+			    "from" : "genres",
+			    "localField" : "dirDirbyMovMovgen.genreid",
+			    "foreignField" : "_id",
+			    "as" : "dirDirbyMovMovgenGenre"
+			}
+		},
+
+		// Stage 10
+		{
+			$unwind: {
+			    path : "$dirDirbyMovMovgenGenre"
+			}
+		},
+
+		// Stage 11
+		{
+			$match: {
+			  "dirDirbyMovMovgenGenre.genre": "Sci-Fi"
+			}
+		},
+
+		// Stage 12
+		{
+			$lookup: {
+			    "from" : "roles",
+			    "localField" : "movieid",
+			    "foreignField" : "movieid",
+			    "as" : "dirDirbyMovMovgenGenreRole"
+			}
+		},
+
+		// Stage 13
+		{
+			$unwind: {
+			    path : "$dirDirbyMovMovgenGenreRole"
+			}
+		},
+
+		// Stage 14
+		{
+			$project: {
+			    // specifications
+			    actorid: "$dirDirbyMovMovgenGenreRole.actorid",
+			    directorid: "$dirDirby._id",
+				_id: 0
+			}
+		},
+	],
+
+	// Options
+	{
+		cursor: {
+			batchSize: 50
+		}
+	}
+
+	// Created with Studio 3T, the IDE for MongoDB - https://studio3t.com/
+
+);
