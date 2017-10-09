@@ -1,0 +1,7 @@
+MATCH(d:Director) WHERE d.first = 'Woody' AND d.last = 'Allen'
+MATCH(g:Genre) WHERE g.genre = 'Comedy'
+MATCH(m:Movie)- [:director_by]-> (d)
+MATCH(m) - [:of_genre] -> (g)
+MATCH(a:Actor)-[:acted_in]->(m)
+WITH a, count(*) AS c WHERE c > 3
+RETURN a.first, a.last

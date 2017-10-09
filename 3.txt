@@ -1,0 +1,5 @@
+CREATE INDEX ON :Actor(first, last)
+CREATE INDEX ON :Movie(year)
+CREATE INDEX ON :Genre(genre)
+CREATE INDEX ON :Director(first, last)
+

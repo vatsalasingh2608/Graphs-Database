@@ -1,0 +1,5 @@
+MATCH(d:Director) WHERE d.first = 'Steven' AND d.last = 'Spielberg'
+MATCH(m) - [:director_by]-> (d)
+MATCH(g:Genre) WHERE g.genre CONTAINS "Drama"
+MATCH(m)-[:of_genre]-> (g)
+RETURN count(DISTINCT m.movieid)

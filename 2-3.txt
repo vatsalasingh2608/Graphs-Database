@@ -1,0 +1,5 @@
+MATCH(d:Director) WHERE d.first = 'Steven' AND d.last = 'Spielberg'
+MATCH(a:Actor) WHERE a.first = 'Tom' AND a.last = 'Hanks'
+MATCH(m) - [:director_by]-> (d)
+MATCH(a)-[:acted_in]->(m)
+RETURN count(m.movieid)
