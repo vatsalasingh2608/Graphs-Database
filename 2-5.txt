@@ -1,0 +1,5 @@
+MATCH (leo:Actor) WHERE leo.first CONTAINS 'Leonardo' and leo.last CONTAINS 'DiCaprio'
+MATCH (kate:Actor) WHERE kate.first CONTAINS 'Kate' and kate.last CONTAINS 'Winslet'
+MATCH (leo)-[:acted_in*1..6]-(m:Movie)
+MATCH (kate)-[:acted_in*1..6]-(m)
+RETURN DISTINCT m.title

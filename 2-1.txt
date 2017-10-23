@@ -1,0 +1,7 @@
+MATCH(d:Director) WHERE d.first = 'James (I)' AND d.last = 'Cameron'
+MATCH(m:Movie) WHERE m.year >=1989 AND m.year <= 1995
+MATCH(m) - [:director_by]-> (d)
+MATCH(g:Genre) WHERE g.genre CONTAINS "Sci-Fi"
+MATCH(m)-[:of_genre]-> (g)
+MATCH(a:Actor)-[:acted_in]->(m)
+RETURN count(a.actorid)
